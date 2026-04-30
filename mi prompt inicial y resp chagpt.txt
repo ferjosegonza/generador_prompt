@@ -1,0 +1,258 @@
+prompt inicial p/ generar el código del script (texto mío):
+
+quiero que me crees un script que pueda instalar localmente y haga lo siguiente (dame un paso a paso para crearlo, y cómo usarlo):
+que pueda abrir una terminal, ya sea powershell, bash u otra, posicionado en una cierta ruta, en el directorio desde el cual estoy ejecutando el comando, que haga esto:
+1. que cree un archivo llamado prompt_precargado.txt
+2. que agregue los siguientes textos dentro del archivo (te los especifico con comillas triples, luego de cada agregación también agrega un salto de línea):
+2.1 """Tengo un proyecto con los siguientes archivos:"""
+2.2 a continuación un listado de todos los archivos, así estén en el directorio principal o en subdirectorios contenidos en el directorio donde está posicionado es decir desde donde se ejecutó el comando en la terminal, estos archivos deben incluir la ruta si es que están a su vez dentro de otros subdirectorios, si están dentro del directorio principal desde el cual se ejecuta el comando, bastará con el nombre del archivo.
+2.3 se agrega el texto """Quiero que haga esto: """
+2.4 se agrega el texto """A continuación te paso el código de cada uno de los archivos involucrados del proyecto:"""
+2.5 luego se agregará nuevamente el listado de todos los archivos involucrados y debajo el código completo de cada uno.
+
+
+Instrucciones de chatgpt como respuesta:
+Esto que querés hacer es una excelente idea (básicamente estás armando un **generador automático de prompts de contexto**). Te lo dejo **simple, portable y profesional**, para que lo uses todos los días sin fricción.
+
+Voy a darte una solución con **Node.js** porque:
+
+* funciona en Windows, Linux y Mac
+* maneja bien archivos y encoding
+* es fácil de extender después
+
+---
+
+# 🚀 RESULTADO FINAL
+
+Vas a poder hacer:
+
+```bash
+node generar_prompt.js
+```
+
+Y se te crea:
+
+```
+prompt_precargado.txt
+```
+
+con:
+
+* listado de archivos
+* rutas
+* código completo de cada uno
+
+---
+
+# 🧱 PASO A PASO
+
+## 1. Crear carpeta del script
+
+```bash
+mkdir generador-prompt
+cd generador-prompt
+```
+
+---
+
+## 2. Crear archivo
+
+```bash
+touch generar_prompt.js
+```
+
+(o crealo manualmente en VS Code)
+
+---
+
+## 3. Pegá este código
+
+```javascript
+const fs = require('fs');
+const path = require('path');
+
+const outputFile = 'prompt_precargado.txt';
+const baseDir = process.cwd();
+
+// extensiones que queremos incluir (podés ajustar)
+const EXTENSIONES_VALIDAS = [
+  '.js', '.ts', '.php', '.html', '.css', '.json',
+  '.md', '.txt', '.blade.php'
+];
+
+// ignorar carpetas pesadas/innecesarias
+const IGNORAR = ['node_modules', '.git', 'vendor', 'dist', 'build'];
+
+function esValido(file) {
+  return EXTENSIONES_VALIDAS.some(ext => file.endsWith(ext));
+}
+
+function recorrerDir(dir) {
+  let resultados = [];
+
+  const archivos = fs.readdirSync(dir);
+
+  archivos.forEach(file => {
+    const fullPath = path.join(dir, file);
+    const relativePath = path.relative(baseDir, fullPath);
+
+    if (IGNORAR.some(ign => relativePath.includes(ign))) return;
+
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      resultados = resultados.concat(recorrerDir(fullPath));
+    } else if (esValido(file)) {
+      resultados.push(relativePath || file);
+    }
+  });
+
+  return resultados;
+}
+
+// 1. obtener archivos
+const archivos = recorrerDir(baseDir);
+
+// 2. armar contenido
+let contenido = '';
+
+contenido += 'Tengo un proyecto con los siguientes archivos:\n\n';
+
+// listado simple
+archivos.forEach(a => {
+  contenido += a + '\n';
+});
+
+contenido += '\nQuiero que haga esto:\n\n';
+
+contenido += 'A continuación te paso el código de cada uno de los archivos involucrados del proyecto:\n\n';
+
+// código de cada archivo
+archivos.forEach(a => {
+  const ruta = path.join(baseDir, a);
+
+  contenido += `\n===== ARCHIVO: ${a} =====\n\n`;
+
+  try {
+    const code = fs.readFileSync(ruta, 'utf8');
+    contenido += code + '\n';
+  } catch (err) {
+    contenido += '[ERROR AL LEER ARCHIVO]\n';
+  }
+});
+
+// 3. escribir archivo
+fs.writeFileSync(outputFile, contenido, 'utf8');
+
+console.log(`✅ Archivo generado: ${outputFile}`);
+```
+
+---
+
+# ▶️ CÓMO USARLO
+
+## Opción 1 (directa)
+
+Ir a tu proyecto:
+
+```bash
+cd mi-proyecto
+```
+
+Copiar el script ahí o usar ruta:
+
+```bash
+node ruta/al/script/generar_prompt.js
+```
+
+---
+
+## Opción 2 (más pro)
+
+Agregarlo global:
+
+1. Crear carpeta:
+
+```bash
+mkdir ~/scripts
+```
+
+2. Guardar ahí el archivo
+
+3. Ejecutar desde cualquier proyecto:
+
+```bash
+node ~/scripts/generar_prompt.js
+```
+
+---
+
+# 🧠 MEJORAS (muy recomendadas)
+
+## 1. Evitar archivos enormes
+
+Agregá:
+
+```javascript
+if (stat.size > 200000) return; // 200kb
+```
+
+---
+
+## 2. Ignorar archivos sensibles
+
+Agregar:
+
+```javascript
+const IGNORAR_ARCHIVOS = ['.env'];
+
+if (IGNORAR_ARCHIVOS.includes(file)) return;
+```
+
+---
+
+## 3. Convertirlo en comando tipo CLI (nivel senior)
+
+Podés hacer:
+
+```bash
+npm init -y
+npm install -g .
+```
+
+y ejecutarlo como:
+
+```bash
+generar-prompt
+```
+
+(si querés te explico eso después)
+
+---
+
+# ⚠️ COSA IMPORTANTE
+
+Esto puede generar archivos MUY grandes.
+
+👉 Si tu proyecto es grande:
+
+* ChatGPT puede no aceptar todo
+* conviene filtrar archivos relevantes
+
+---
+
+# 🧩 RESUMEN
+
+✔ Ejecutás desde cualquier carpeta
+✔ Te genera un prompt listo
+✔ Incluye estructura + código
+✔ Te ahorra copiar/pegar manual
+
+---
+
+Si querés, en el siguiente paso te hago una versión **inteligente** que:
+👉 detecta solo archivos modificados
+👉 o solo los que vos le digas (tipo `--only controllers,services`)
+👉 o incluso que lo mande directo a ChatGPT listo para pegar
+
+Eso ya es nivel *herramienta profesional real*.
