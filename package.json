@@ -1,0 +1,9 @@
+{
+  "name": "genprompt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generar_prompt.js",
+  "bin": {
+    "genprompt": "./generar_prompt.js"
+  }
+}

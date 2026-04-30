@@ -1,0 +1,23 @@
+en un powershell del vs code
+crear:
+ mkdir C:\scripts
+
+posicionarme:
+ cd C:\scripts 
+
+ver que estén copiados en esa carpeta "scripts" los archivos:
+D:\xampp\htdocs\generador_prompt\generar_prompt.js
+y
+D:\xampp\htdocs\generador_prompt\package.json
+
+ejecutar:
+ "npm.cmd init -y"
+ (primero me dijo de ejecutar "npm init -y" pero al saltar un error me dijo lo de arriba)
+
+ejecutar:
+ npm.cmd install -g .
+
+desp puedo posicionarme en la carpeta de mi proyecto y ejecutar:
+ genprompt
+
+y genera el "prompt_precargado.txt"
