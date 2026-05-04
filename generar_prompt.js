@@ -12,8 +12,27 @@ const EXTENSIONES_VALIDAS = [
   '.md', '.txt', '.blade.php'
 ];
 
-// ignorar carpetas pesadas/innecesarias
-const IGNORAR = ['node_modules', '.git', 'vendor', 'dist', 'build'];
+// carpetas a ignorar
+const IGNORAR = ['node_modules', '.git', 'vendor', 'dist', 'build', 'logs', 'tmp'];
+
+// mapear extensión → lenguaje markdown
+function obtenerLenguaje(file) {
+  if (file.endsWith('.blade.php')) return 'php';
+  const ext = path.extname(file);
+
+  const map = {
+    '.js': 'javascript',
+    '.ts': 'typescript',
+    '.php': 'php',
+    '.html': 'html',
+    '.css': 'css',
+    '.json': 'json',
+    '.md': 'markdown',
+    '.txt': 'text'
+  };
+
+  return map[ext] || '';
+}
 
 function esValido(file) {
   return EXTENSIONES_VALIDAS.some(ext => file.endsWith(ext));
@@ -42,38 +61,95 @@ function recorrerDir(dir) {
   return resultados;
 }
 
-// 1. obtener archivos
+//////////////////////////////////////////////////////////
+// 🔥 LIMPIEZA DE CÓDIGO
+//////////////////////////////////////////////////////////
+
+function limpiarComentarios(codigo, lenguaje, filePath = '') {
+  try {
+    // 🔥 detectar blade aunque lo mapees como php
+    const esBlade = filePath.endsWith('.blade.php');
+
+    if (esBlade) {
+      return codigo
+        .replace(/{{--[\s\S]*?--}}/g, '')       // Blade comments
+        .replace(/\/\/.*$/gm, '')              // comentarios //
+        .replace(/\/\*[\s\S]*?\*\//g, '');     // comentarios /* */
+    }
+
+    switch (lenguaje) {
+      case 'javascript':
+      case 'typescript':
+      case 'php':
+      case 'css':
+        return codigo
+          .replace(/\/\/.*$/gm, '')
+          .replace(/\/\*[\s\S]*?\*\//g, '');
+
+      case 'html':
+        return codigo.replace(/<!--[\s\S]*?-->/g, '');
+
+      case 'python':
+        return codigo.replace(/#.*$/gm, '');
+
+      default:
+        return codigo;
+    }
+  } catch {
+    return codigo;
+  }
+}
+
+function limpiarEspacios(codigo) {
+  return codigo
+    .replace(/[ \t]+$/gm, '')   // quitar espacios al final de línea
+    .replace(/\n{3,}/g, '\n\n') // evitar saltos excesivos
+    .trim();
+}
+
+//////////////////////////////////////////////////////////
+// 🚀 EJECUCIÓN
+//////////////////////////////////////////////////////////
+
 const archivos = recorrerDir(baseDir);
 
 // 2. armar contenido
 let contenido = '';
 
-contenido += 'Tengo un proyecto con los siguientes archivos:\n\n';
+contenido += `# 📦 Contexto del proyecto\n\n`;
 
-// listado simple
+contenido += `## 📁 Archivos incluidos\n\n`;
 archivos.forEach(a => {
-  contenido += a + '\n';
+  contenido += `- ${a}\n`;
 });
 
-contenido += '\nQuiero que haga esto:\n\n';
+contenido += `\n---\n`;
+contenido += `## 🎯 Objetivo\n`;
+contenido += `...\n\n`;
 
-contenido += 'A continuación te paso el código de cada uno de los archivos involucrados del proyecto:\n\n';
+contenido += `---\n`;
+contenido += `## 🧠 Código fuente de los archivos mencionados\n\n`;
 
 // código de cada archivo
 archivos.forEach(a => {
   const ruta = path.join(baseDir, a);
+  const lenguaje = obtenerLenguaje(a);
 
-  contenido += `\n===== ARCHIVO: ${a} =====\n\n`;
+  contenido += `### 📄 ${a}\n\n`;
 
   try {
-    const code = fs.readFileSync(ruta, 'utf8');
-    contenido += code + '\n';
+    let code = fs.readFileSync(ruta, 'utf8');
+
+    code = limpiarComentarios(code, lenguaje, a);
+    code = limpiarEspacios(code);
+
+    contenido += `\`\`\`${lenguaje}\n${code}\n\`\`\`\n\n`;
   } catch (err) {
-    contenido += '[ERROR AL LEER ARCHIVO]\n';
+    contenido += `[ERROR AL LEER ARCHIVO]\n\n`;
   }
 });
 
-// 3. escribir archivo
+// escribir archivo
 fs.writeFileSync(outputFile, contenido, 'utf8');
 
-console.log(`✅ Archivo generado: ${outputFile}`);
+console.log(`✅ Prompt generado: ${outputFile}`);
