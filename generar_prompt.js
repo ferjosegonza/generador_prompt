@@ -125,7 +125,9 @@ archivos.forEach(a => {
 
 contenido += `\n---\n`;
 contenido += `## 🎯 Objetivo\n`;
-contenido += `...\n\n`;
+contenido += `Quiero que:\n`
+contenido += `1. Tengas en cuenta todos los cambios necesarios en todos los archivos del proyecto y no me des ejemplos sino todo el código completo que necesito modificar, no es necesario que me devuelvas todos los códigos completos pero sí el código completo de lo que es nuevo y me especifiqués bien a qué archivo copiarselo, qué parte reemplaza, qué código borrar, no dejes cabos sueltos. Tu explicación debe ser detallada y permitir la implementación completa de todo lo que te pido.\n`;
+contenido += `2. \n`;
 
 contenido += `---\n`;
 contenido += `## 🧠 Código fuente de los archivos mencionados\n\n`;
