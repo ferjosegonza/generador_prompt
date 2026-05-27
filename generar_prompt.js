@@ -47,7 +47,9 @@ function recorrerDir(dir) {
     const fullPath = path.join(dir, file);
     const relativePath = path.relative(baseDir, fullPath);
 
-    if (IGNORAR.some(ign => relativePath.includes(ign))) return;
+    const partesRuta = relativePath.split(path.sep);
+
+    if (partesRuta.some(parte => IGNORAR.includes(parte))) return;
 
     const stat = fs.statSync(fullPath);
 
