@@ -9,7 +9,7 @@ const baseDir = process.cwd();
 // extensiones que queremos incluir (podés ajustar)
 const EXTENSIONES_VALIDAS = [
   '.js', '.ts', '.php', '.html', '.css', '.json',
-  '.md', '.txt', '.blade.php'
+  '.md', '.txt', '.blade.php', 'gs'
 ];
 
 // carpetas a ignorar
