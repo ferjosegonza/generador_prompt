@@ -10,9 +10,14 @@
 # Puedes añadir más rutas aquí
 # C:\otra\ruta\archivo.txt
 
-D:\xampp\htdocs\iprodha\public\js\juridicos\Guarda\guarda.js
-D:\xampp\htdocs\iprodha\app\Http\Controllers\Juridico\Guarda\GuardaController.php
-D:\xampp\htdocs\iprodha\app\Services\Juridico\GuardaService.php
-D:\xampp\htdocs\iprodha\routes\Juridicos\Juridicos.php
-D:\xampp\htdocs\iprodha\app\Models\Juridicos\Guarda.php
-D:\xampp\htdocs\iprodha\resources\views\juridicos\Guarda\index.blade.php
+# D:\xampp\htdocs\iprodha\public\js\juridicos\Guarda\guarda.js
+# D:\xampp\htdocs\iprodha\app\Http\Controllers\Juridico\Guarda\GuardaController.php
+# D:\xampp\htdocs\iprodha\app\Services\Juridico\GuardaService.php
+# D:\xampp\htdocs\iprodha\app\Models\Juridicos\Guarda.php
+# D:\xampp\htdocs\iprodha\resources\views\juridicos\Guarda\index.blade.php
+# D:\xampp\htdocs\iprodha\routes\Juridicos\Juridicos.php
+
+D:\xampp\htdocs\iprodha\app\Services\Juridico\EstadoDeudaService.php
+D:\xampp\htdocs\iprodha\app\Http\Controllers\Juridico\EstadoDeuda\EstadoDeudaController.php
+D:\xampp\htdocs\iprodha\resources\views\juridicos\EstadoDeuda\pdf\estado_deuda_pdf_pi.blade.php
+D:\xampp\htdocs\iprodha\routes\Juridicos\Estado_Deuda.php
