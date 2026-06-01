@@ -5,6 +5,7 @@
   "main": "generar_prompt.js",
   "bin": {
     "genprompt": "./generar_prompt.js",
-    "copyfiles": "./copiar_archivos.js"
+    "copyfiles": "./copiar_archivos.js",
+    "genprompte": "./generar_prompt_e.js"
   }
 }
